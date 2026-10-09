@@ -102,11 +102,11 @@ users.id              1 ──< chat_messages.user_id   (each user has many mess
 
 This covers how accounts are created, how passwords are protected, and how login works.
 
-The code lives in the runnable app, [app/](../app/). Copies of the files are in the Problem 4 folder.
+The code lives in the runnable app, [backend/](../backend/) and [frontend/](../frontend/). Copies of the files are in the Problem 4 folder.
 
 | File | What it does |
 |---|---|
-| `backend/auth.py` (new) | Password hashing, sessions, and the `/api/auth/*` routes |
+| `backend/auth.py` (new; merged into `main.py` in Problem 13) | Password hashing, sessions, and the `/api/auth/*` routes |
 | `backend/main.py` | Registers the auth routes and creates the `sessions` table at startup. Also fixes a security bug: `/images` used to serve all of `data/`, including the database file |
 | `frontend/src/auth.tsx` (new) | `AuthProvider` / `useAuth()`: keeps track of who is logged in |
 | `frontend/src/pages/Register.tsx`, `Login.tsx` | Real forms connected to the API |
@@ -176,7 +176,7 @@ This table lets the site remember who is logged in. It is created automatically 
 ### 3. How login works
 
 ```
-Browser                                    FastAPI (backend/auth.py)                  SQLite
+Browser                                    FastAPI (backend/main.py)                  SQLite
 ───────                                    ─────────────────────────                  ──────
 POST /api/auth/login {email, password} ──▶ 1. lowercase email; check lockout counter
                                            2. SELECT * FROM users WHERE lower(email)=? ──▶ users
@@ -262,7 +262,7 @@ The seeded hashes don't record their iteration count. Using the password provide
 
 The website's chat widget is now backed by a real AI shopping assistant: a **PydanticAI agent** running inside the FastAPI app. The agent looks up real products, prices, and stock through tools, and returns a structured reply. The website then shows that reply along with product cards.
 
-All paths below are in the runnable app, [app/](../app/). Copies of the files are in the Problem 5 folder.
+All paths below are in the runnable app, [backend/](../backend/) and [frontend/](../frontend/). Copies of the files are in the Problem 5 folder.
 
 ### Files
 
@@ -463,7 +463,7 @@ The end-to-end tests used PydanticAI's **`FunctionModel`**: a scripted stand-in 
 
 ## Problem 6 — Tools: product info and stock
 
-The agent answers questions about a product's **description**, **price**, and **how many are in stock** by calling three tools that read `data/campus_customs.db`. It never answers these from memory. Code is in the runnable app ([app/backend](../app/backend/)), and copies of the changed files are in the Problem 6 folder.
+The agent answers questions about a product's **description**, **price**, and **how many are in stock** by calling three tools that read `data/campus_customs.db`. It never answers these from memory. Code is in the runnable app ([backend/](../backend/)), and copies of the changed files are in the Problem 6 folder.
 
 | File | Change |
 |---|---|
@@ -1031,12 +1031,12 @@ This section brings the agent together in one place: its data models, tools, saf
 
 ### Running the site
 
-You need Python and Node.js installed. Use two terminals, starting in the `app/` folder. In PowerShell, type `npm.cmd` instead of `npm`.
+You need Python and Node.js installed. Use two terminals, starting at the repo root. In PowerShell, type `npm.cmd` instead of `npm`.
 
 ```bash
 # Terminal 1: backend (FastAPI + the agent) on http://localhost:8000, API docs at /docs
-pip install -r ../requirements.txt        # requirements.txt and .env.example are at the repo root
-copy ..\.env.example ..\.env              # optional: add ANTHROPIC_API_KEY to use Claude
+pip install -r requirements.txt
+copy .env.example .env                    # optional: add ANTHROPIC_API_KEY to use Claude
 cd backend
 python -m uvicorn main:app --reload --port 8000
 
@@ -1228,7 +1228,7 @@ The project is on GitHub as a public repository: **https://github.com/wjp27-y/ca
 
 ### The agent in four files
 
-The agent now lives in exactly four files under `app/backend/`. The other agent modules were merged in, with no change in behavior:
+The agent now lives in exactly four files under `backend/`. The other agent modules were merged in, with no change in behavior:
 
 | File | What it holds | Merged in |
 |---|---|---|
@@ -1237,28 +1237,27 @@ The agent now lives in exactly four files under `app/backend/`. The other agent 
 | `tools.py` | The six read-only agent tools, plus the API helpers, now including `build_facts()` for the fact-checker | `build_facts()` from `factcheck.py` |
 | `models.py` | The Pydantic types for the agent, tools, chat API, and fact-checker | (no change) |
 
-`main.py` (web routes) and `auth.py` (accounts) are the web app around the agent.
+`main.py` is the web app around the agent. `auth.py` (accounts and login) was merged into it, so `backend/` is exactly `main.py`, `agent.py`, `models.py`, `tools.py`, and `prompts/prompt.md`.
 
 ### Top-level files
 
-`AI_prompts.md` (the prompt log, moved from the Problem 1 folder), `requirements.txt`, and `.env.example` (both moved from `app/backend/`) are at the repo root. `main.py` loads `.env` from the repo root and, if present, from `app/backend/`. The Problem 1 folder keeps a synced copy of `AI_prompts.md`.
+`backend/` and `frontend/` moved up from `app/` to the repo root. `AI_prompts.md` (the prompt log, moved from the Problem 1 folder), `requirements.txt`, and `.env.example` (both moved from the backend folder) are at the repo root too. `main.py` loads `.env` from the repo root and, if present, from `app/backend/`. The Problem 1 folder keeps a synced copy of `AI_prompts.md`.
 
 ### What's in the repo and what isn't
 
 | Kept out by `.gitignore` | Why |
 |---|---|
-| `.env` (any `.env`, at the root or in `app/backend/`) | Holds API keys. Only `.env.example`, with empty placeholders, is committed |
-| `data/campus_customs.db` (any `*.db`) | The real database, with accounts and chats. It comes from the data pack |
-| `data/products/*` | The real product photos. They come from the data pack. `data/products/.gitkeep` keeps the folder so the backend can start |
+| `.env` (any `.env`, at the root or in `backend/`) | Holds API keys. Only `.env.example`, with empty placeholders, is committed |
+| `data/` (the whole folder, and any `*.db`) | The local-only data pack: `campus_customs.db`, with accounts and chats, and the product photos in `products/` |
 | `node_modules/`, `dist/`, `__pycache__/` | Installed or built files |
 
-[data/README.md](../data/README.md) says what goes in `data/`. Before pushing, every tracked file was searched for API keys and the `.env` key values. None were found.
+The [README](../README.md) says what goes in `data/`. Before pushing, every tracked file was searched for API keys and the `.env` key values. None were found.
 
 ### Running it from a fresh clone
 
 1. Unzip the data pack into `data/`: `data/campus_customs.db` and `data/products/*.jpg`.
-2. Backend: from the repo root, `pip install -r requirements.txt` and `cp .env.example .env` (optionally add `ANTHROPIC_API_KEY`). Then `cd app/backend` and `uvicorn main:app --reload --port 8000`.
-3. Frontend: `cd app/frontend`, `npm install`, `npm run dev`, then open http://localhost:5173.
+2. Backend: from the repo root, `pip install -r requirements.txt` and `cp .env.example .env` (optionally add `ANTHROPIC_API_KEY`). Then `cd backend` and `uvicorn main:app --reload --port 8000`.
+3. Frontend: `cd frontend`, `npm install`, `npm run dev`, then open http://localhost:5173.
 
 With no API key, the chat runs on the local rule-based model through the same PydanticAI agent.
 
@@ -1270,4 +1269,5 @@ With no API key, the chat runs on the local rule-based model through the same Py
 | Fact-checker given "The Basic Hoodie Big Yale is $45." | Flagged "Says $45, but no product looked up costs that" and replied from the database ($68.00, stock per size) |
 | A model that calls a tool forever | Stopped at 5 requests and was logged as `loop_limit (5 model requests)` |
 | Register, then chat logged in (on a copy of the database) | Account created (201). "Hi Smoke! Welcome to Campus Customs…". History returned 2 saved messages |
+| After moving `backend/` and `frontend/` to the repo root and merging `auth.py` into `main.py`: the 6 chats, wrong password, login, `/api/auth/me`, logout | Replies identical to before. Wrong password 401, login 200, me returned the user, logout 204 and then me 401. The four `/api/auth/*` routes are unchanged |
 | `npm run build` (TypeScript check + Vite build) | Passed |

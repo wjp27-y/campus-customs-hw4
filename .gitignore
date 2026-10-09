@@ -3,12 +3,11 @@
 .env.*
 !.env.example
 
-# Real data: the database and the product photos stay local (see data/README.md)
+# The data pack is local only: data/campus_customs.db and data/products/ (see README.md)
+data/
 *.db
 *.sqlite
 *.sqlite3
-data/products/*
-!data/products/.gitkeep
 
 # Dependencies and build output
 node_modules/

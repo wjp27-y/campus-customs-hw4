@@ -85,13 +85,13 @@ Also, I need sections in the h4 folder delineated by each Problem with correspon
 
 ### Output
 - Reorganized the hw 4 folder into one folder per problem (`Problem 1 - …`, `Problem 2 - …`, `Problem 3 - …`), with `data/` shared at the root and an index in `README.md`.
-- Front end: React + Vite + TypeScript in [frontend/](app/frontend/).
+- Front end: React + Vite + TypeScript in [frontend/](frontend/).
   - Top nav bar: Home · Products · About Us · Log in · Create account.
   - Home and About Us: written in my own words, based on facts from yalebulldogblue.com (officially licensed Yale merch; residential college, sports, and graduate school collections; store at 57 Broadway, New Haven).
   - Products: all 102 catalogue items, each with image, name, price, and a short description, plus search, category filter, and sort.
   - Product page: large image on one side; on the other, description, price, colors, and in/out of stock for each size.
   - Chat widget in the bottom-right corner on every page.
-- Backend: FastAPI in [backend/main.py](app/backend/main.py) with `/api/products`, `/api/products/{id}`, `/api/chat` (placeholder reply), and `/images` (product photos).
+- Backend: FastAPI in [backend/main.py](backend/main.py) with `/api/products`, `/api/products/{id}`, `/api/chat` (placeholder reply), and `/images` (product photos).
 - Verified: `tsc` and `vite build` pass. Through the dev proxy, the API returns all 102 products, product detail with sizes, a 404 for unknown IDs, product images, and the chat reply. Screenshots of Home, Products, and the product page were checked.
 - Not done yet: real chatbot logic, log in / account creation against the `users` table, and the cart.
 
@@ -481,6 +481,50 @@ give me the github repo url so I can submit the whole hw4 folder. Make sure it's
 ### Output
 - Moved `AI_prompts.md` (from the Problem 1 folder), `requirements.txt`, and `.env.example` (from `app/backend/`) to the top of the repo. The Problem 1 folder keeps a synced copy of `AI_prompts.md`.
 - `main.py` now loads `.env` from the repo root, so `cp .env.example .env` at the root works. The README and harness run steps were updated.
+- Repo URL: https://github.com/wjp27-y/campus-customs-hw4
+
+### Prompt 5
+```
+Continued:
+
+after .env.example,
+
+- .gitignore
+-README.md
+- frontend/
+- backend/
+        - main.py
+         - agent.py
+          - models.py
+         - tools.py
+            - prompts/prompt.md
+
+
+-output/
+      - harness.md
+       - design.md
+        - usability.md
+        - app_check.html
+         - app_check_images/
+        - audit_trail.json 
+with screenshots linked from app_check.html
+
+with FastAPI app - run with: uvicorn main:app --reload --port 8000 
+
+local only data pack is data/ 
+- campus_customs.db
+- products/
+
+data pack stuff should not be in git
+```
+
+### Output
+- Moved `frontend/` and `backend/` up from `app/` to the repo root. `app/` is gone, and its README's pages and API tables are now in the root README.
+- Merged `auth.py` into `main.py` (I chose this when asked), so `backend/` is exactly `main.py`, `agent.py`, `models.py`, `tools.py`, and `prompts/prompt.md`. The Problem folders and `sync_problem_folders.py` stay in the repo (also my choice).
+- `output/` has `harness.md`, `design.md`, `usability.md`, `app_check.html`, `app_check_images/`, and `audit_trail.json`. The screenshots in `app_check.html` link to `app_check_images/`.
+- The whole `data/` folder (`campus_customs.db`, `products/`) is git-ignored and local only. `data/README.md` was removed; the README explains the data pack.
+- Run the backend with `cd backend` then `uvicorn main:app --reload --port 8000`.
+- Tested: the same chats gave the same replies, and register, login, me, logout, and saved history worked. The frontend builds.
 - Repo URL: https://github.com/wjp27-y/campus-customs-hw4
 
 ---

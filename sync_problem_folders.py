@@ -1,11 +1,11 @@
-"""Copy each problem's files from the runnable app (app/) into its Problem folder.
+"""Copy each problem's files from the runnable app (backend/, frontend/) into its Problem folder.
 
-The app in app/ is the single source of truth: edit code there, then run
+The app at the repo root (backend/, frontend/) is the single source of truth: edit code there, then run
 
     python sync_problem_folders.py
 
 to refresh the copies in each Problem folder, plus its README and (for Problem 2) the schema dump.
-Copies keep the same relative path they have in app/ (e.g. Problem 4/backend/auth.py).
+Copies keep the same relative path they have at the repo root (e.g. Problem 4/backend/main.py).
 """
 
 import re
@@ -14,11 +14,10 @@ import sqlite3
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent
-APP = ROOT / "app"
 HARNESS = "../output/harness.md"
 
 # folder -> (title, harness anchor or None, [(path, what this problem did with it)])
-# Paths under backend/ or frontend/ are in app/. Other paths (requirements.txt, .env.example) are at the repo root.
+# Paths are relative to the repo root.
 PROBLEMS: dict[str, tuple[str, str | None, list[tuple[str, str]]]] = {
     "Problem 3 - Build the Campus Customs website": (
         "Problem 3 — Build the Campus Customs website",
@@ -48,8 +47,7 @@ PROBLEMS: dict[str, tuple[str, str | None, list[tuple[str, str]]]] = {
         "Problem 4 — Create account and login",
         "problem-4--create-account-and-login",
         [
-            ("backend/auth.py", "NEW: password hashing (PBKDF2), sessions, /api/auth/register, login, logout, me"),
-            ("backend/main.py", "CHANGED: adds auth routes and the sessions table; images route fixed so the DB can't be downloaded"),
+            ("backend/main.py", "CHANGED: accounts section: password hashing (PBKDF2), sessions table, /api/auth/register, login, logout, me (was auth.py until Problem 13); images route fixed so the DB can't be downloaded"),
             ("frontend/src/auth.tsx", "NEW: AuthProvider / useAuth (who is logged in)"),
             ("frontend/src/pages/Register.tsx", "CHANGED: real Create account form (first, last, email, password, confirm)"),
             ("frontend/src/pages/Login.tsx", "CHANGED: real Log in form (email, password)"),
@@ -168,16 +166,16 @@ PROBLEMS: dict[str, tuple[str, str | None, list[tuple[str, str]]]] = {
             ("backend/agent.py", "CHANGED: the whole agent in one file: shopping agent, audit trail, fact-checker, local models (were audit.py, factcheck.py, fallback.py)"),
             ("backend/tools.py", "CHANGED: build_facts() moved here from factcheck.py"),
             ("backend/models.py", "CHANGED (docstring only): the agent's structured types, the fourth agent file"),
-            ("backend/main.py", "CHANGED: imports the agent from agent.py only; also loads .env from the repo root"),
-            ("requirements.txt", "MOVED: from app/backend/ to the repo root"),
-            (".env.example", "MOVED: from app/backend/ to the repo root"),
+            ("backend/main.py", "CHANGED: auth.py merged in; imports the agent from agent.py only; loads .env from the repo root"),
+            ("requirements.txt", "MOVED: from backend/ to the repo root"),
+            (".env.example", "MOVED: from backend/ to the repo root"),
         ],
     ),
 }
 
 NOTE = (
     "> These are **copies** of the files this problem added or changed. The runnable app is in "
-    "[`app/`](../app/) (run it from there; see [app/README.md](../app/README.md)). "
+    "[`backend/`](../backend/) and [`frontend/`](../frontend/) (see the [README](../README.md) to run it). "
     "Files show their current version, so later problems' changes may appear too. "
     "Refresh with `python sync_problem_folders.py` from the hw 4 folder."
 )
@@ -191,7 +189,7 @@ def sync_problem(folder: str, title: str, anchor: str | None, files: list[tuple[
     for rel, _ in files:
         target = dest / rel
         target.parent.mkdir(parents=True, exist_ok=True)
-        shutil.copy2((APP if rel.startswith(("backend/", "frontend/")) else ROOT) / rel, target)
+        shutil.copy2(ROOT / rel, target)
 
     lines = [f"# {title}", "", NOTE, ""]
     if anchor:

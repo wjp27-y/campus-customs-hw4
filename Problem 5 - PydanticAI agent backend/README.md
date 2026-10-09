@@ -1,6 +1,6 @@
 # Problem 5 — PydanticAI agent backend
 
-> These are **copies** of the files this problem added or changed. The runnable app is in [`app/`](../app/) (run it from there; see [app/README.md](../app/README.md)). Files show their current version, so later problems' changes may appear too. Refresh with `python sync_problem_folders.py` from the hw 4 folder.
+> These are **copies** of the files this problem added or changed. The runnable app is in [`backend/`](../backend/) and [`frontend/`](../frontend/) (see the [README](../README.md) to run it). Files show their current version, so later problems' changes may appear too. Refresh with `python sync_problem_folders.py` from the hw 4 folder.
 
 Write-up: [output/harness.md → Problem 5](../output/harness.md#problem-5--pydanticai-agent-backend)
 

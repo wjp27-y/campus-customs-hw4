@@ -222,7 +222,7 @@ async def run_chat(
 # shortened with emails and long numbers masked, and get_shopper_context results are reduced to "logged in or
 # guest" plus the page.
 
-AUDIT_PATH = Path(os.environ.get("CC_AUDIT_PATH", Path(__file__).resolve().parents[2] / "output" / "audit_trail.json"))
+AUDIT_PATH = Path(os.environ.get("CC_AUDIT_PATH", Path(__file__).resolve().parents[1] / "output" / "audit_trail.json"))
 SHORT = 160  # max characters for each argument / result summary
 _lock = threading.Lock()
 
