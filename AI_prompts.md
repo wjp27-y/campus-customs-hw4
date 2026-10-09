@@ -527,4 +527,12 @@ data pack stuff should not be in git
 - Tested: the same chats gave the same replies, and register, login, me, logout, and saved history worked. The frontend builds.
 - Repo URL: https://github.com/wjp27-y/campus-customs-hw4
 
+### Prompt 6
+```
+give me the link
+```
+
+### Output
+- https://github.com/wjp27-y/campus-customs-hw4
+
 ---
