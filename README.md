@@ -5,6 +5,7 @@ Campus Customs is a shopping website for Yale Bulldog Blue apparel with an AI sh
 - **[app/](app/)** is the runnable app: `app/frontend/` (website) and `app/backend/` (API + agent).
 - **`Problem N - …/` folders** hold copies of the files each problem added or changed, plus a README, so each problem's work can be read on its own.
 - **[output/harness.md](output/harness.md)** is the harness document, with a section per problem.
+- **[AI_prompts.md](AI_prompts.md)** is every prompt used, by problem. **[requirements.txt](requirements.txt)** and **[.env.example](.env.example)** are the backend's Python dependencies and settings template.
 
 ## How it works
 
@@ -59,10 +60,11 @@ On startup the backend adds what later problems need: a `sessions` table for log
 **2. Start the back end** (Python 3.11+), on http://localhost:8000:
 
 ```bash
-cd app/backend
+# from the repo root
 pip install -r requirements.txt
 cp .env.example .env          # Windows cmd: copy .env.example .env
 # optional: put your key in .env  ->  ANTHROPIC_API_KEY=...
+cd app/backend
 uvicorn main:app --reload --port 8000
 ```
 
@@ -82,7 +84,7 @@ In Windows PowerShell, use `npm.cmd` if the execution policy blocks `npm`.
 
 | Problem | Folder | Main output |
 |---|---|---|
-| 1 — Vibe coder prompts | [Problem 1 - Vibe coder prompts](Problem%201%20-%20Vibe%20coder%20prompts/) | [AI_prompts.md](Problem%201%20-%20Vibe%20coder%20prompts/AI_prompts.md): every prompt, by problem |
+| 1 — Vibe coder prompts | [Problem 1 - Vibe coder prompts](Problem%201%20-%20Vibe%20coder%20prompts/) | [AI_prompts.md](AI_prompts.md): every prompt, by problem |
 | 2 — Analyze the database | [Problem 2 - Analyze the database](Problem%202%20-%20Analyze%20the%20database/) | [harness → Problem 2](output/harness.md#problem-2--analyze-the-database), `schema.sql` |
 | 3 — Build the Campus Customs website | [Problem 3 - Build the Campus Customs website](Problem%203%20-%20Build%20the%20Campus%20Customs%20website/) | Website pages, nav bar, product grid and page, chat widget, FastAPI `backend/main.py` |
 | 4 — Create account and login | [Problem 4 - Create account and login](Problem%204%20-%20Create%20account%20and%20login/) | `backend/auth.py`, Login/Register pages; [harness → Problem 4](output/harness.md#problem-4--create-account-and-login) |
@@ -100,7 +102,7 @@ In Windows PowerShell, use `npm.cmd` if the execution policy blocks `npm`.
 
 `.gitignore` keeps these out:
 
-- `app/backend/.env`, which holds API keys. Only `.env.example` with empty placeholders is committed.
+- `.env`, which holds API keys. Only `.env.example` with empty placeholders is committed.
 - `data/campus_customs.db` and the product photos in `data/products/`. They come from the data pack.
 - `node_modules/`, `dist/`, and `__pycache__/`.
 

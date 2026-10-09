@@ -15,8 +15,6 @@ backend/
   tools.py               Read-only database tools the agent can call
   models.py              Structured types for the agent, tools, and chat API
   prompts/prompt.md      Prompts: shopping assistant (voice, tools, safety rules), then the fact-checker
-  .env.example           Copy to .env and add ANTHROPIC_API_KEY
-  requirements.txt
 ```
 
 ## Run it
@@ -25,9 +23,10 @@ Use two terminals. In Git Bash or cmd, `npm` works as-is. In PowerShell, use `np
 
 ```bash
 # 1) Backend: http://localhost:8000  (API docs at /docs)
+# requirements.txt and .env.example are at the repo root, one level up from app/
+pip install -r ../requirements.txt
+copy ..\.env.example ..\.env           # then add your ANTHROPIC_API_KEY
 cd backend
-pip install -r requirements.txt
-copy .env.example .env                 # then add your ANTHROPIC_API_KEY
 uvicorn main:app --reload --port 8000  # or: python -m uvicorn ... if uvicorn isn't on PATH
 
 # 2) Frontend: http://localhost:5173

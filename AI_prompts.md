@@ -68,7 +68,7 @@ look at data/campus_customs.db, and undersatnd the table and its fields, at leas
 ```
 
 ### Output
-See [output/harness.md](../output/harness.md#problem-2--analyze-the-database).
+See [output/harness.md](output/harness.md#problem-2--analyze-the-database).
 
 ---
 
@@ -85,13 +85,13 @@ Also, I need sections in the h4 folder delineated by each Problem with correspon
 
 ### Output
 - Reorganized the hw 4 folder into one folder per problem (`Problem 1 - …`, `Problem 2 - …`, `Problem 3 - …`), with `data/` shared at the root and an index in `README.md`.
-- Front end: React + Vite + TypeScript in [frontend/](../app/frontend/).
+- Front end: React + Vite + TypeScript in [frontend/](app/frontend/).
   - Top nav bar: Home · Products · About Us · Log in · Create account.
   - Home and About Us: written in my own words, based on facts from yalebulldogblue.com (officially licensed Yale merch; residential college, sports, and graduate school collections; store at 57 Broadway, New Haven).
   - Products: all 102 catalogue items, each with image, name, price, and a short description, plus search, category filter, and sort.
   - Product page: large image on one side; on the other, description, price, colors, and in/out of stock for each size.
   - Chat widget in the bottom-right corner on every page.
-- Backend: FastAPI in [backend/main.py](../app/backend/main.py) with `/api/products`, `/api/products/{id}`, `/api/chat` (placeholder reply), and `/images` (product photos).
+- Backend: FastAPI in [backend/main.py](app/backend/main.py) with `/api/products`, `/api/products/{id}`, `/api/chat` (placeholder reply), and `/images` (product photos).
 - Verified: `tsc` and `vite build` pass. Through the dev proxy, the API returns all 102 products, product detail with sizes, a 404 for unknown IDs, product images, and the chat reply. Screenshots of Home, Products, and the product page were checked.
 - Not done yet: real chatbot logic, log in / account creation against the `users` table, and the cart.
 
@@ -117,7 +117,7 @@ I should be able to log in as the test user and create a brand-new account
 ```
 
 ### Output
-- Write-up: [output/harness.md → Problem 4](../output/harness.md#problem-4--create-account-and-login). It covers what is stored, how passwords are protected, how login works, and the test results.
+- Write-up: [output/harness.md → Problem 4](output/harness.md#problem-4--create-account-and-login). It covers what is stored, how passwords are protected, how login works, and the test results.
 - Backend `backend/auth.py`: `/api/auth/register`, `/login`, `/logout`, `/me`.
   - Passwords are hashed with PBKDF2-SHA256 (600k iterations, random salt per user).
   - Sessions use an HttpOnly cookie. Only the session token's hash is stored, in a new `sessions` table.
@@ -147,7 +147,7 @@ add this as an additional prompt and mention that I needed this prompt because I
   - Wrong password → `401`. `password` → `200` (Test User). `/api/auth/me` → `200`.
   - The stored hash was upgraded from the legacy format to `pbkdf2_sha256$600000$…`.
   - Logging out and back in with `password` still works (`200`).
-- Updated the test results in the [harness](../output/harness.md#problem-4--create-account-and-login).
+- Updated the test results in the [harness](output/harness.md#problem-4--create-account-and-login).
 
 ### Follow-up prompt 3
 ```
@@ -160,7 +160,7 @@ delete the README.txt
 ```
 
 ### Output (follow-ups 3–4)
-- Merged the two harness files into one document, [output/harness.md](../output/harness.md), at the top of the hw 4 folder. It has a section for Problem 2 (database tables and fields) and one for Problem 4 (accounts and login). Removed the per-problem copies.
+- Merged the two harness files into one document, [output/harness.md](output/harness.md), at the top of the hw 4 folder. It has a section for Problem 2 (database tables and fields) and one for Problem 4 (accounts and login). Removed the per-problem copies.
 - Problem 2 and Problem 4 folders now each have a short `README.md` that points to their section of the harness.
 - Updated all links (root README, Problem 3 README, this log, handoff).
 - Deleted `README.txt`, which only contained "HW 4".
@@ -212,7 +212,7 @@ uvicorn main:app --reload --port 8000
   - `models.py`: `ChatRequest`, `AgentReply`, `ProductCard`, `ChatResponse`, tool result types, `AgentDeps`.
   - `main.py`: `POST /api/chat` and `GET /api/chat/history`. Validation, a 20-per-minute rate limit, history from the DB for logged-in users, product cards built from the DB, and chats saved to `chat_messages`.
 - Frontend chat widget now sends history, shows product cards that link to product pages, and restores saved chats after login.
-- Wrote the [harness Problem 5 section](../output/harness.md#problem-5--pydanticai-agent-backend).
+- Wrote the [harness Problem 5 section](output/harness.md#problem-5--pydanticai-agent-backend).
 - Tested with a scripted PydanticAI `FunctionModel` against a copy of the DB. All API and browser checks passed (see harness).
 
 ---
@@ -240,7 +240,7 @@ finally, for output/harness.md, list the tools the agent uses and which model fi
   - Each is a primary-key lookup of only the columns it needs. They replace Problem 5's catch-all `get_product_details`. `search_products` and `list_categories` stay, to find product IDs and answer broad questions.
 - `app/backend/models.py`: new result types `ProductDescription`, `ProductPrice`, `ProductStock` (with `SizeStock`). Field names are the catalogue/inventory column names.
 - `app/backend/prompts/prompt.md`: a 3-step "use the tools" guide (find the product → call the matching tool → answer), with a question-to-tool table. The agent now gives exact stock counts when asked.
-- [Harness Problem 6 section](../output/harness.md#problem-6--tools-product-info-and-stock): each tool, the model fields it returns, which catalogue columns they come from, and why (efficient indexed lookups).
+- [Harness Problem 6 section](output/harness.md#problem-6--tools-product-info-and-stock): each tool, the model fields it returns, which catalogue columns they come from, and why (efficient indexed lookups).
 - Tested: 8/8 tool checks passed through the agent against a DB copy (results matched direct SQL; bad size and unknown ID both trigger a retry the model recovers from).
 - New `Problem 6 - Tools product info and stock/` folder with copies of the changed files (via `sync_problem_folders.py`).
 
@@ -292,7 +292,7 @@ When a customer asks for an itme, the agent should display related items on the 
 - **Same cards as Problem 3:** the section uses the existing `ProductCard` component, so clicking a card opens the product page with the large image, full description, price, and sizes.
 - `prompts/prompt.md`: new "Showing products on the page" section explaining when to fill `product_ids` / `results_title` and how to keep the reply short.
 - The local model handles browsing ("show me navy hoodies" → 8 hoodies) as well as single-product questions.
-- [Harness Problem 7 section](../output/harness.md#problem-7--chat-search-that-updates-the-page): the end-to-end flow, prompt rules, and test results.
+- [Harness Problem 7 section](output/harness.md#problem-7--chat-search-that-updates-the-page): the end-to-end flow, prompt rules, and test results.
 - Tested in a real browser: chat search from the About page switched to `/products` with 8 cards; a second search updated the section in place; clicking a card opened its full product page; Back kept the results; Clear removed them; "hi" left the page unchanged.
 
 ### Follow-up prompt 2
@@ -318,7 +318,7 @@ Remember history for logged users, not guests, although guest can still use the 
 - **The agent knows who it's talking to:** the per-turn context lists the customer's first/last name, member-since date, saved-message count, the last product discussed, and the tools it can call. It never sees email, password hash, or user id. The new `get_shopper_context` tool returns the same information.
 - **Page context:** every chat message carries the open product page and the result cards on screen. The server checks them against the catalogue, so the agent can work out "this", "it", or "the second one" without a product name.
 - Fixed: answering about a product already on screen no longer replaces the page's result cards.
-- `prompts/prompt.md`: new section on using the customer and page context. The [harness Problem 8 section](../output/harness.md#problem-8--customer-memory) covers storage, customer fields, how page context is preserved, and the tests.
+- `prompts/prompt.md`: new section on using the customer and page context. The [harness Problem 8 section](output/harness.md#problem-8--customer-memory) covers storage, customer fields, how page context is preserved, and the tests.
 - Tested: 13 API checks (guest vs logged-in, memory across sessions, fake IDs dropped, 0 guest rows saved) and a browser run ("how much is this?" on a product page, "the second one" / "the third one" from the page cards).
 
 ---
@@ -345,7 +345,7 @@ For backend, I added a factchecker for the agent in case it starts to report fal
 - **"Start over":** a button in the chat header. For logged-in customers it confirms, then deletes their saved chat (`DELETE /api/chat/history`). For everyone it resets the chat and clears the page results.
 - **Cheaper model:** the agent now defaults to **Claude Sonnet 5.5** ($2/$10 per million tokens, vs. $4/$20 for Opus 5.5). It escalates to **Opus 5.5** only when a message leans on the saved conversation ("the one you recommended earlier", or a vague "it" in a long chat with nothing on the page).
 - **Fact-checker agent:** a second PydanticAI agent (`factcheck.py`, `prompts/factcheck.md`, Sonnet 5.5, no tools) checks every price and stock claim against the database. Wrong replies are corrected, or replaced with a reply written straight from the database. Replies with no price or stock claims skip the check.
-- [output/usability.md](../output/usability.md) has the requested text. The [harness Problem 9 section](../output/harness.md#problem-9--usability-improvements) covers how each part works and the tests.
+- [output/usability.md](output/usability.md) has the requested text. The [harness Problem 9 section](output/harness.md#problem-9--usability-improvements) covers how each part works and the tests.
 - Tested: 10 API checks (bubble contents, a forced false price/stock reply corrected, 8 routing cases, Start over for user and guest) and a headless-browser run (bubble → Navy t-shirts on the page, "the second one" on the new cards, Start over wipes the chat and history). Fixed during testing: "Navy t-shirts" had included gray shirts with navy printing.
 
 ---
@@ -369,7 +369,7 @@ In output/design.md, write these design changes I made, and: "I made the site mo
 - **Product cards pop out** when clicked, then open the product page.
 - **Gon and Naruto:** original cartoon versions in the bottom-left corner, taking turns with encouraging lines that change on each page, plus a live "X points from your next reward" line. They can be hidden.
 - **Point tracker** in the nav: +10 per product card click (catalogue or chat cards), +50 per purchase (the product page button is now "Buy size M · +50 pts"; there's no real checkout yet). Goal 300, then +100 each time it's met, with a reward toast: 10% off at Campus Customs vending machines plus a code. Saved per account in the browser.
-- [output/design.md](../output/design.md) lists the changes and has the requested text. The [harness Problem 10 section](../output/harness.md#problem-10--style-the-website) covers how each part works and the tests.
+- [output/design.md](output/design.md) lists the changes and has the requested text. The [harness Problem 10 section](output/harness.md#problem-10--style-the-website) covers how each part works and the tests.
 - Tested in headless Edge: Papyrus loads, all 5 spiders move, card pop then product page (+10), buy (+50), crossing 300 shows the reward and moves the goal to 400, points survive a reload, the bulldog goes happy → sad (30 s) → stressed (60 s) → happy after a chat message, and Start over replays his hello.
 
 ---
@@ -402,7 +402,7 @@ Link the third image to app_check_images/usabilityfeature.png from app_check.htm
 
 ### Output
 - Saved the screenshots as `output/app_check_images/inventory.png`, `dynamicsearchresultcards.png`, and `usabilityfeature.png`.
-- Made [output/app_check.html](../output/app_check.html). It shows each image (click to open it full size) with the requested caption under it, in the site's Yale blue style.
+- Made [output/app_check.html](output/app_check.html). It shows each image (click to open it full size) with the requested caption under it, in the site's Yale blue style.
 
 ---
 
@@ -435,11 +435,11 @@ In output/harness.md, there should be the model fields in models.py and why they
 ```
 
 ### Output
-- **Audit trail:** new `backend/audit.py`. Every agent run, whether it finishes, hits the loop limit, or fails, is added to [output/audit_trail.json](../output/audit_trail.json): start and end time, model, logged in or guest, a short version of the message, each tool call and result (tool name, arguments and results cut to 160 characters), number of model requests, stop reason, and reply. Runs are added to the end and never erased, including across server restarts. Emails, long numbers, and customer names are kept out of the file.
+- **Audit trail:** new `backend/audit.py`. Every agent run, whether it finishes, hits the loop limit, or fails, is added to [output/audit_trail.json](output/audit_trail.json): start and end time, model, logged in or guest, a short version of the message, each tool call and result (tool name, arguments and results cut to 160 characters), number of model requests, stop reason, and reply. Runs are added to the end and never erased, including across server restarts. Emails, long numbers, and customer names are kept out of the file.
 - **Loop limit:** the agent loop now stops after 5 model requests (`LOOP_LIMIT` in `agent.py`). The prompt tells the agent it has 5 steps.
 - **Result cap:** `cap_reply()` in `models.py` makes every reply one paragraph of at most 7 sentences, including fact-checked replies. The prompt asks for no lists.
 - **Safety rules:** the three rules are in the Safety rules section of `backend/prompts/prompt.md`, with a short explanation of each.
-- **Harness:** a new [Problem 12 section](../output/harness.md#problem-12--audit-trail-safety-finish-harness) covers every `models.py` model and why it was chosen, the 6 tools and what the agent can do, the safety rules, the models (Sonnet 5.5 by default, Opus 5.5 for escalation, Sonnet 5.5 fact-checker, local fallback), the loop limit and reply cap, the audit trail, how to run the frontend and backend, and the test results.
+- **Harness:** a new [Problem 12 section](output/harness.md#problem-12--audit-trail-safety-finish-harness) covers every `models.py` model and why it was chosen, the 6 tools and what the agent can do, the safety rules, the models (Sonnet 5.5 by default, Opus 5.5 for escalation, Sonnet 5.5 fact-checker, local fallback), the loop limit and reply cap, the audit trail, how to run the frontend and backend, and the test results.
 - Tested: 3 chats through the live site added 3 entries; separate runs added to the file without erasing it; a model that loops forever stopped at 5 requests and was logged as `loop_limit`; an email in a message was masked; replies were capped.
 
 ---
@@ -467,7 +467,7 @@ I want you to make sure the code in the hw4 folder and then push it to a public 
 - **Checked the code:** the same chats gave identical replies before and after the merge. The fact-checker, the 5-request loop limit, register/login with saved chat, and the frontend build all passed.
 - **README.md:** explains how the front end and back end work, the four agent files, and how to run both with the data pack.
 - **Kept out of the repo:** `.env` (only `.env.example` with placeholders), `campus_customs.db`, and the product photos. `data/README.md` explains what goes in `data/`.
-- **Harness:** a new [Problem 13 section](../output/harness.md#problem-13--push-to-github).
+- **Harness:** a new [Problem 13 section](output/harness.md#problem-13--push-to-github).
 
 ### Prompt 4
 ```

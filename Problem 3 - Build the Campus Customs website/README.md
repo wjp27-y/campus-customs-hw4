@@ -21,4 +21,4 @@
 | [frontend/src/pages/Products.tsx](frontend/src/pages/Products.tsx) | Products grid with search, category filter, sort |
 | [frontend/src/pages/ProductPage.tsx](frontend/src/pages/ProductPage.tsx) | Single product: large image + description, price, stock per size |
 | [backend/main.py](backend/main.py) | FastAPI app: products, product detail, images |
-| [backend/requirements.txt](backend/requirements.txt) | Python dependencies |
+| [requirements.txt](requirements.txt) | Python dependencies (at the repo root) |

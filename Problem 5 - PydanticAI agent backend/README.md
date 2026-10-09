@@ -11,8 +11,8 @@ Write-up: [output/harness.md → Problem 5](../output/harness.md#problem-5--pyda
 | [backend/tools.py](backend/tools.py) | NEW: tools the agent can call (search, categories; Problem 6 added the product info/stock tools) |
 | [backend/models.py](backend/models.py) | NEW: structured types (chat request/response, product cards, tool results) |
 | [backend/main.py](backend/main.py) | CHANGED: POST /api/chat and GET /api/chat/history routes |
-| [backend/.env.example](backend/.env.example) | NEW: template for backend/.env (API key) |
-| [backend/requirements.txt](backend/requirements.txt) | CHANGED: adds pydantic-ai and python-dotenv |
+| [.env.example](.env.example) | NEW: template for .env (API key), at the repo root |
+| [requirements.txt](requirements.txt) | CHANGED: adds pydantic-ai and python-dotenv |
 | [frontend/src/components/ChatWidget.tsx](frontend/src/components/ChatWidget.tsx) | CHANGED: sends history, shows product cards, restores saved chat |
 | [frontend/src/api.ts](frontend/src/api.ts) | CHANGED: sendChat with history, getChatHistory |
 | [frontend/src/types.ts](frontend/src/types.ts) | CHANGED: ProductCard and ChatMessage types |

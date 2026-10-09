@@ -16,7 +16,9 @@ from pathlib import Path
 
 from dotenv import load_dotenv
 
-# Load API keys (e.g. ANTHROPIC_API_KEY) from backend/.env before the agent is imported.
+# Load API keys (e.g. ANTHROPIC_API_KEY) before the agent is imported: from .env at the repo root (copied from
+# .env.example), and from backend/.env if there is one. A variable that is already set is never overwritten.
+load_dotenv(Path(__file__).resolve().parents[2] / ".env")
 load_dotenv(Path(__file__).parent / ".env")
 
 from fastapi import Cookie, FastAPI, HTTPException, Request, Response  # noqa: E402

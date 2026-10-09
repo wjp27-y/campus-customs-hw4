@@ -10,4 +10,6 @@ Write-up: [output/harness.md → Problem 13](../output/harness.md#problem-13--pu
 | [backend/agent.py](backend/agent.py) | CHANGED: the whole agent in one file: shopping agent, audit trail, fact-checker, local models (were audit.py, factcheck.py, fallback.py) |
 | [backend/tools.py](backend/tools.py) | CHANGED: build_facts() moved here from factcheck.py |
 | [backend/models.py](backend/models.py) | CHANGED (docstring only): the agent's structured types, the fourth agent file |
-| [backend/main.py](backend/main.py) | CHANGED: imports the agent from agent.py only |
+| [backend/main.py](backend/main.py) | CHANGED: imports the agent from agent.py only; also loads .env from the repo root |
+| [requirements.txt](requirements.txt) | MOVED: from app/backend/ to the repo root |
+| [.env.example](.env.example) | MOVED: from app/backend/ to the repo root |

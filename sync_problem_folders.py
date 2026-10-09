@@ -8,6 +8,7 @@ to refresh the copies in each Problem folder, plus its README and (for Problem 2
 Copies keep the same relative path they have in app/ (e.g. Problem 4/backend/auth.py).
 """
 
+import re
 import shutil
 import sqlite3
 from pathlib import Path
@@ -16,7 +17,8 @@ ROOT = Path(__file__).resolve().parent
 APP = ROOT / "app"
 HARNESS = "../output/harness.md"
 
-# folder -> (title, harness anchor or None, [(app-relative path, what this problem did with it)])
+# folder -> (title, harness anchor or None, [(path, what this problem did with it)])
+# Paths under backend/ or frontend/ are in app/. Other paths (requirements.txt, .env.example) are at the repo root.
 PROBLEMS: dict[str, tuple[str, str | None, list[tuple[str, str]]]] = {
     "Problem 3 - Build the Campus Customs website": (
         "Problem 3 — Build the Campus Customs website",
@@ -39,7 +41,7 @@ PROBLEMS: dict[str, tuple[str, str | None, list[tuple[str, str]]]] = {
             ("frontend/src/pages/Products.tsx", "Products grid with search, category filter, sort"),
             ("frontend/src/pages/ProductPage.tsx", "Single product: large image + description, price, stock per size"),
             ("backend/main.py", "FastAPI app: products, product detail, images"),
-            ("backend/requirements.txt", "Python dependencies"),
+            ("requirements.txt", "Python dependencies (at the repo root)"),
         ],
     ),
     "Problem 4 - Create account and login": (
@@ -65,8 +67,8 @@ PROBLEMS: dict[str, tuple[str, str | None, list[tuple[str, str]]]] = {
             ("backend/tools.py", "NEW: tools the agent can call (search, categories; Problem 6 added the product info/stock tools)"),
             ("backend/models.py", "NEW: structured types (chat request/response, product cards, tool results)"),
             ("backend/main.py", "CHANGED: POST /api/chat and GET /api/chat/history routes"),
-            ("backend/.env.example", "NEW: template for backend/.env (API key)"),
-            ("backend/requirements.txt", "CHANGED: adds pydantic-ai and python-dotenv"),
+            (".env.example", "NEW: template for .env (API key), at the repo root"),
+            ("requirements.txt", "CHANGED: adds pydantic-ai and python-dotenv"),
             ("frontend/src/components/ChatWidget.tsx", "CHANGED: sends history, shows product cards, restores saved chat"),
             ("frontend/src/api.ts", "CHANGED: sendChat with history, getChatHistory"),
             ("frontend/src/types.ts", "CHANGED: ProductCard and ChatMessage types"),
@@ -123,7 +125,7 @@ PROBLEMS: dict[str, tuple[str, str | None, list[tuple[str, str]]]] = {
             ("backend/tools.py", "CHANGED: find_products() + similar_products() for the 'Products similar' bubble; build_facts() for the fact-checker"),
             ("backend/models.py", "CHANGED: SimilarSearch, SimilarProducts, FactCheck; AgentReply.similar_search; ChatResponse.similar"),
             ("backend/prompts/prompt.md", "CHANGED: 'Products similar' instructions; the fact-checker's prompt at the end of the file"),
-            ("backend/.env.example", "CHANGED: CC_AGENT_MODEL / CC_ESCALATION_MODEL / CC_FACTCHECK_MODEL"),
+            (".env.example", "CHANGED: CC_AGENT_MODEL / CC_ESCALATION_MODEL / CC_FACTCHECK_MODEL"),
             ("frontend/src/components/ChatWidget.tsx", "CHANGED: 'Products similar' bubble and Start over button"),
             ("frontend/src/api.ts", "CHANGED: clearChatHistory()"),
             ("frontend/src/types.ts", "CHANGED: SimilarProducts; ChatReply.similar"),
@@ -166,7 +168,9 @@ PROBLEMS: dict[str, tuple[str, str | None, list[tuple[str, str]]]] = {
             ("backend/agent.py", "CHANGED: the whole agent in one file: shopping agent, audit trail, fact-checker, local models (were audit.py, factcheck.py, fallback.py)"),
             ("backend/tools.py", "CHANGED: build_facts() moved here from factcheck.py"),
             ("backend/models.py", "CHANGED (docstring only): the agent's structured types, the fourth agent file"),
-            ("backend/main.py", "CHANGED: imports the agent from agent.py only"),
+            ("backend/main.py", "CHANGED: imports the agent from agent.py only; also loads .env from the repo root"),
+            ("requirements.txt", "MOVED: from app/backend/ to the repo root"),
+            (".env.example", "MOVED: from app/backend/ to the repo root"),
         ],
     ),
 }
@@ -187,7 +191,7 @@ def sync_problem(folder: str, title: str, anchor: str | None, files: list[tuple[
     for rel, _ in files:
         target = dest / rel
         target.parent.mkdir(parents=True, exist_ok=True)
-        shutil.copy2(APP / rel, target)
+        shutil.copy2((APP if rel.startswith(("backend/", "frontend/")) else ROOT) / rel, target)
 
     lines = [f"# {title}", "", NOTE, ""]
     if anchor:
@@ -220,6 +224,14 @@ def sync_problem2() -> None:
     )
 
 
+def sync_problem1() -> None:
+    """Problem 1's prompt log lives at the repo root (AI_prompts.md). Copy it in, with its links fixed for the folder."""
+    dest = ROOT / "Problem 1 - Vibe coder prompts"
+    dest.mkdir(exist_ok=True)
+    text = (ROOT / "AI_prompts.md").read_bytes().decode("utf-8")
+    (dest / "AI_prompts.md").write_bytes(re.sub(r"\]\((?!https?:|#)", "](../", text).encode("utf-8"))
+
+
 def sync_problem11() -> None:
     """Problem 11 changes no app code: copy the app check page and its screenshots from output/."""
     dest = ROOT / "Problem 11 - Site testing (app check)"
@@ -243,8 +255,9 @@ def sync_problem11() -> None:
 
 
 if __name__ == "__main__":
+    sync_problem1()
     sync_problem2()
     for folder, (title, anchor, files) in PROBLEMS.items():
         sync_problem(folder, title, anchor, files)
     sync_problem11()
-    print("Synced:", ", ".join(["Problem 2", *[f.split(" - ")[0] for f in PROBLEMS], "Problem 11"]))
+    print("Synced:", ", ".join(["Problem 1", "Problem 2", *[f.split(" - ")[0] for f in PROBLEMS], "Problem 11"]))

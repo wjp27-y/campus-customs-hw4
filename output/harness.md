@@ -1035,9 +1035,9 @@ You need Python and Node.js installed. Use two terminals, starting in the `app/`
 
 ```bash
 # Terminal 1: backend (FastAPI + the agent) on http://localhost:8000, API docs at /docs
+pip install -r ../requirements.txt        # requirements.txt and .env.example are at the repo root
+copy ..\.env.example ..\.env              # optional: add ANTHROPIC_API_KEY to use Claude
 cd backend
-pip install -r requirements.txt
-copy .env.example .env                    # optional: add ANTHROPIC_API_KEY to use Claude
 python -m uvicorn main:app --reload --port 8000
 
 # Terminal 2: frontend (React + Vite) on http://localhost:5173
@@ -1239,11 +1239,15 @@ The agent now lives in exactly four files under `app/backend/`. The other agent 
 
 `main.py` (web routes) and `auth.py` (accounts) are the web app around the agent.
 
+### Top-level files
+
+`AI_prompts.md` (the prompt log, moved from the Problem 1 folder), `requirements.txt`, and `.env.example` (both moved from `app/backend/`) are at the repo root. `main.py` loads `.env` from the repo root and, if present, from `app/backend/`. The Problem 1 folder keeps a synced copy of `AI_prompts.md`.
+
 ### What's in the repo and what isn't
 
 | Kept out by `.gitignore` | Why |
 |---|---|
-| `app/backend/.env` (any `.env`) | Holds API keys. Only `.env.example`, with empty placeholders, is committed |
+| `.env` (any `.env`, at the root or in `app/backend/`) | Holds API keys. Only `.env.example`, with empty placeholders, is committed |
 | `data/campus_customs.db` (any `*.db`) | The real database, with accounts and chats. It comes from the data pack |
 | `data/products/*` | The real product photos. They come from the data pack. `data/products/.gitkeep` keeps the folder so the backend can start |
 | `node_modules/`, `dist/`, `__pycache__/` | Installed or built files |
@@ -1253,7 +1257,7 @@ The agent now lives in exactly four files under `app/backend/`. The other agent 
 ### Running it from a fresh clone
 
 1. Unzip the data pack into `data/`: `data/campus_customs.db` and `data/products/*.jpg`.
-2. Backend: `cd app/backend`, `pip install -r requirements.txt`, `cp .env.example .env` (optionally add `ANTHROPIC_API_KEY`), `uvicorn main:app --reload --port 8000`.
+2. Backend: from the repo root, `pip install -r requirements.txt` and `cp .env.example .env` (optionally add `ANTHROPIC_API_KEY`). Then `cd app/backend` and `uvicorn main:app --reload --port 8000`.
 3. Frontend: `cd app/frontend`, `npm install`, `npm run dev`, then open http://localhost:5173.
 
 With no API key, the chat runs on the local rule-based model through the same PydanticAI agent.
